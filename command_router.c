@@ -22,7 +22,7 @@ void init(CommandRouter *cr) {
 }
 
 Command createCommand(char *name, CommandHandler ch) {
-  Command command = {name, ch};
+  Command command = {strdup(name), ch};
   return command;
 }
 
