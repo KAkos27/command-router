@@ -76,7 +76,7 @@ void popAt(CommandRouter *cr, size_t index) {
 }
 
 void pop(CommandRouter *cr, const char *name) {
-  size_t index = -1;
+  size_t index = 0;
   bool found = false;
 
   for (size_t i = 0; i < cr->length; i++) {
