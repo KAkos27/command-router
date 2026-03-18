@@ -16,5 +16,6 @@ int main() {
   executeCommand(cr, "second", "second with c");
   executeCommand(cr, "first", "first with b");
 
+  freeRouter(cr);
   return 0;
 }

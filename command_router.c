@@ -1,4 +1,5 @@
 #include "command_router.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +26,10 @@ CommandRouter *initRouter() {
 }
 
 struct Command createCommand(const char *name, CommandHandler ch) {
-  struct Command command = {strdup(name), ch};
+  char *copy = malloc((strlen(name) + 1) * sizeof(char));
+  strcpy(copy, name);
+
+  struct Command command = {copy, ch};
   return command;
 }
 
@@ -42,9 +46,37 @@ void registerCommand(CommandRouter *cr, const char *name, CommandHandler ch) {
 }
 
 void executeCommand(CommandRouter *cr, const char *name, const char *data) {
-  for (int i = 0; i < cr->length; i++) {
+  for (size_t i = 0; i < cr->length; i++) {
     if (strcmp(name, cr->commands[i].name) == 0) {
       cr->commands[i].handler(data);
     }
   }
+}
+
+CommandRouter *pop(CommandRouter *cr, size_t index) {
+  if (index >= cr->length) {
+    printf("Index %zu is out of bounds", index);
+    return cr;
+  }
+
+  CommandRouter *temp = initRouter();
+
+  for (size_t i = 0; i < cr->length; i++) {
+    if (i != index) {
+      registerCommand(temp, cr->commands[i].name, cr->commands[i].handler);
+    }
+  }
+
+  freeRouter(cr);
+
+  return temp;
+}
+
+void freeRouter(CommandRouter *cr) {
+  for (size_t i = 0; i < cr->length; i++) {
+    free(cr->commands[i].name);
+  }
+
+  free(cr->commands);
+  free(cr);
 }
