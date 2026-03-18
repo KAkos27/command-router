@@ -53,23 +53,19 @@ void executeCommand(CommandRouter *cr, const char *name, const char *data) {
   }
 }
 
-CommandRouter *pop(CommandRouter *cr, size_t index) {
+void pop(CommandRouter *cr, size_t index) {
   if (index >= cr->length) {
     printf("Index %zu is out of bounds", index);
-    return cr;
+    return;
   }
 
-  CommandRouter *temp = initRouter();
+  free(cr->commands[index].name);
 
-  for (size_t i = 0; i < cr->length; i++) {
-    if (i != index) {
-      registerCommand(temp, cr->commands[i].name, cr->commands[i].handler);
-    }
+  for (size_t i = index; i < cr->length - 1; i++) {
+    cr->commands[i] = cr->commands[i + 1];
   }
 
-  freeRouter(cr);
-
-  return temp;
+  cr->length--;
 }
 
 void freeRouter(CommandRouter *cr) {
